@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.18.1/axios.js"></script>
+    <title>Perfil Profesional</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f1f5f9;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Contenedor Principal */
+        .dashboard {
+            width: 100%;
+            max-width: 1100px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 35px;
+        }
+
+        /* Cabecera del Perfil */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        #perfil {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid #2563eb;
+            object-fit: cover;
+        }
+
+        .header-info h1 {
+            font-size: 26px;
+            color: #0f172a;
+        }
+
+        .header-info h2 {
+            font-size: 16px;
+            color: #2563eb;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Rejilla de Tarjetas */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        /* Tarjetas de Información */
+        .card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #444e5e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 6px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #3c5374;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        /* Estilo especial para Seguridad y Credenciales */
+        .card-seguridad {
+            grid-column: span 2;
+            background-color: #abaeb3;
+            color: #0a3968;
+            border: none;
+        }
+
+        .card-seguridad h3 {
+            color: #080808;
+            border-bottom: 1px solid #dbdcdd;
+        }
+
+        .card-seguridad p {
+            color: #e2e8f0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            word-break: break-all;
+            background-color: #777b81;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-cards {
+                grid-template-columns: 1fr;
+            }
+            .card-seguridad {
+                grid-column: span 1;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+       
+        <div class="header">
+            <img id="perfil" alt="Foto de perfil">
+            <div class="header-info">
+                <h1 id="nombre"></h1>
+                <h2 id="profesion"></h2>
+            </div>
+        </div>
+
+        <!-- Secciones Organizadas -->
+        <div class="grid-cards">
+            
+            
+            <div class="card">
+                <h3>Contacto y Dirección</h3>
+                <p id="email"></p>
+                <p id="telefono"></p>
+                <p id="ubicacion"></p>
+                <p id="direccion"></p>
+                <p id="codigo"></p>
+                <p id="nat"></p>
+            </div>
+
+           
+            <div class="card">
+                <h3>Información Personal</h3>
+                <p id="genero"></p>
+                <p id="edad"></p>
+                <p id="fechaNacimiento"></p>
+                <p id="usuario"></p>
+            </div>
+
+            
+            <div class="card">
+                <h3>Ubicación y Zona Horaria</h3>
+                <p id="latitud"></p>
+                <p id="longitud"></p>
+                <p id="zonahoraria"></p>
+                <p id="desplazamiento"></p>
+            </div>
+
+            
+            <div class="card">
+                <h3>Experiencia y Habilidades</h3>
+                <p id="empresa"></p>
+                <p id="experiencia"></p>
+                <p id="habilidades"></p>
+            </div>
+
+            
+            <div class="card card-seguridad">
+                <h3>Seguridad y Credenciales</h3>
+                <p id="uuid"></p>
+                <p id="password"></p>
+                <p id="salt"></p>
+                <p id="sha1"></p>
+                <p id="sha256"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const profesiones = ["Desarrollador Web", "Diseñador UX/UI", "Analista de Datos", "Ingeniero de Software"]
+        const empresas = ["Tech Solutions", "Innovatech", "Digital Core", "Software Lab"]
+        const habilidades = ["JavaScript / HTML / CSS", "Python / SQL", "Node.js / Express", "Figma / UI Design"]
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            let res = await axios.get("https://randomuser.me/api/")
+            console.log(res);
+
+            let user = res.data.results[0]
+
+            let perfil = document.getElementById("perfil")
+            perfil.src = user.picture.large
+
+            let nombre = document.getElementById("nombre")
+            nombre.textContent = user.name.first + " " + user.name.last
+
+            let profesion = document.getElementById("profesion")
+            profesion.textContent = "Profesión: " + profesiones[Math.floor(Math.random() * profesiones.length)]
+
+            // Contacto y Dirección
+            let email = document.getElementById("email")
+            email.textContent = "Correo: " + user.email
+
+            let telefono = document.getElementById("telefono")
+            telefono.textContent = "Teléfono: " + user.phone + " / Cel: " + user.cell
+
+            let ubicacion = document.getElementById("ubicacion")
+            ubicacion.textContent = "Ubicación: " + user.location.city + ", " + user.location.country
+
+            let direccion = document.getElementById("direccion")
+            direccion.textContent = "Dirección: " + user.location.street.name + " " + user.location.street.number
+
+            let codigo = document.getElementById("codigo")
+            codigo.textContent = "Código Postal: " + user.location.postcode
+
+            let nat = document.getElementById("nat")
+            nat.textContent = "Nacionalidad (NAT): " + user.nat
+
+            // Información Personal
+            let genero = document.getElementById("genero")
+            if (user.gender == "female") {
+                genero.textContent = "Género: Femenino"
+            } else {
+                genero.textContent = "Género: Masculino"
+            }
+
+            let edad = document.getElementById("edad")
+            edad.textContent = "Edad: " + user.dob.age + " años"
+
+            let fechaNacimiento = document.getElementById("fechaNacimiento")
+            fechaNacimiento.textContent = "Fecha de Nacimiento: " + user.dob.date.substring(0, 10)
+
+            let usuario = document.getElementById("usuario")
+            usuario.textContent = "Usuario: @" + user.login.username
+
+            // Ubicación Geográfica
+            let latitud = document.getElementById("latitud")
+            latitud.textContent = "Latitud: " + user.location.coordinates.latitude
+
+            let longitud = document.getElementById("longitud")
+            longitud.textContent = "Longitud: " + user.location.coordinates.longitude
+
+            let zonahoraria = document.getElementById("zonahoraria")
+            zonahoraria.textContent = "Zona Horaria: " + user.location.timezone.description
+
+            let desplazamiento = document.getElementById("desplazamiento")
+            desplazamiento.textContent = "Desplazamiento UTC: " + user.location.timezone.offset
+
+            // Seguridad y Credenciales
+            let uuid = document.getElementById("uuid")
+            uuid.textContent = "UUID: " + user.login.uuid
+
+            let password = document.getElementById("password")
+            password.textContent = "Contraseña: " + user.login.password
+
+            let salt = document.getElementById("salt")
+            salt.textContent = "Sal: " + user.login.salt
+
+            let sha1 = document.getElementById("sha1")
+            sha1.textContent = "SHA1: " + user.login.sha1
+
+            let sha256 = document.getElementById("sha256")
+            sha256.textContent = "SHA256: " + user.login.sha256
+
+            // Empresa y Habilidades
+            let empresa = document.getElementById("empresa")
+            empresa.textContent = "Empresa Actual: " + empresas[Math.floor(Math.random() * empresas.length)]
+
+            let experiencia = document.getElementById("experiencia")
+            experiencia.textContent = "Experiencia: " + (Math.floor(Math.random() * 8) + 1) + " años"
+
+            let habilidad = document.getElementById("habilidades")
+            habilidad.textContent = "Habilidad Principal: " + habilidades[Math.floor(Math.random() * habilidades.length)]
+        })
+
+    
+    </script>
+
+
+
+
+
+</body>
+
+</html>
